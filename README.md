@@ -1,1 +1,1 @@
-# hiyaCFW-dummyfile-creator
+# just a Dummy file creator (for hiyaCFW)
