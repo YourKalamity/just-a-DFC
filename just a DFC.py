@@ -12,6 +12,26 @@ def getFreeSpace(dirname):
     else:
         st = os.statvfs(dirname)
         return st.f_bavail * st.f_frsize / 1024 / 1024 /1024
+def getDriveName():
+    while True:
+        try:
+            driveName = str(input("Enter the drive name of your SD card :   "))
+        except TypeError:
+            print("That's not a valid input")
+            continue
+        try:
+            directory = '/Volumes/' + driveName + "/dummy1"
+            with open(directory, 'ab') as file:
+                file.close()
+        except FileNotFoundError:
+            print("You do not have write access or the drive could not be found")
+            continue
+        except PermissionError:
+            print("You do not have write access")
+            continue
+        else:
+            return driveName
+        
 
 def getDriveLetter():
     while True:
@@ -32,8 +52,10 @@ def getDriveLetter():
                 file.close()
         except FileNotFoundError:
             print("You do not have write access or the drive could not be found")
+            continue
         except PermissionError:
             print("You do not have write access")
+            continue
         else:
             return driveLetter
             break
@@ -67,17 +89,19 @@ def createDummyFiles(amount,dummyFileLocation):
 def main():
     if platform.system() == 'Windows':
         driveLetter = getDriveLetter()
-        print(driveLetter)
-        freeSpace = getFreeSpace(driveLetter + ":/")
+        directory = driveLetter + ":/"
+    elif platform.system() == 'Darwin':
+        driveName = getDriveName()
+        directory = '/Volumes/' + driveName + "/"
+        freeSpace = getFreeSpace(directory)
     else:
-        print("Please use Windows to run this program")
         sys.exit()
         
     print("Free space remaining (in GB) = ", freeSpace)
 
     sizeOfDummyFiles = dummyFilesNeeded(freeSpace)
 
-    dummyFileLocation = driveLetter + ":/dummy1"
+    dummyFileLocation = directory + "dummy1"
 
     createDummyFiles(sizeOfDummyFiles,dummyFileLocation)
 
