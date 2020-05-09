@@ -90,6 +90,7 @@ def main():
     if platform.system() == 'Windows':
         driveLetter = getDriveLetter()
         directory = driveLetter + ":/"
+        freeSpace = getFreeSpace(directory)
     elif platform.system() == 'Darwin':
         driveName = getDriveName()
         directory = '/Volumes/' + driveName + "/"
