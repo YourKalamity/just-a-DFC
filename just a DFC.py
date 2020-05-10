@@ -75,23 +75,31 @@ def createDummyFiles(amount,dummyFileLocation):
     print("Creating dummy files...")
     print("Please wait...")
     with open(dummyFileLocation, 'ab') as dummyFile:
-        numChars = amount * 1024 * 1024 * 1024  + 10
+        numChars = amount * 1024 * 1024 * 1024  + 1024
         x = 0
-        thing = '1'.encode()
+        toWrite = '1'.encode()
         while x < numChars:
-            dummyFile.write(thing)
+            dummyFile.write(toWrite)
             x = x + 1
 
     print("A dummy file has been created and saved as dummy1 on the root of the SD card")
+    print("You may move this file to a different folder")
     print("This application will now close")
     sys.exit()
 
 def main():
+    print("-Just Kalam's just a dummy file creator (for hiyaCFW)-")
+    print("This program will calculate if a dummy file is needed ")
+    print("to insure hiyaCFW does not boot into the 'An error has")
+    print("occured' screen")
+    print("")
     if platform.system() == 'Windows':
+        print('Platform : "Windows" ')
         driveLetter = getDriveLetter()
         directory = driveLetter + ":/"
         freeSpace = getFreeSpace(directory)
     elif platform.system() == 'Darwin':
+        print('Platform : "MacOS X" ')
         driveName = getDriveName()
         directory = '/Volumes/' + driveName + "/"
         freeSpace = getFreeSpace(directory)
