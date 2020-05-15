@@ -68,8 +68,9 @@ def getDriveLetter():
         if len(driveLetter) != 1:
             print("That's not a valid input")
             continue
-        if driveLetter not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+        if driveLetter not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" or driveLetter == '/' :
             print("That's not a valid input")
+            continue
         try:
             directory = driveLetter + ":/dummy1"
             with open(directory, 'ab') as file:
@@ -126,11 +127,13 @@ def main():
         freeSpace = getFreeSpace(directory)
     elif platform.system() == 'Darwin':
         print('Platform : "MacOS X" ')
+        print("This program will ONLY work on Python 3 and above")
         driveName = getDriveName()
         directory = '/Volumes/' + driveName + "/"
         freeSpace = getFreeSpace(directory)
     elif platform.system() == 'Linux':
         print('Platform : "Linux"')
+        print("This program will ONLY work on Python 3 and above")
         driveDirectory = getDriveDirectory()
         freeSpace = getFreeSpace(driveDirectory)
     else:
