@@ -32,6 +32,30 @@ def getDriveName():
         else:
             return driveName
         
+def getDriveDirectory():
+    while True:
+        try:
+            print("Enter the FULL directory of your SD card")
+            print("For example '/dev/sda1' without the quotation marks")
+            driveDirectory = str(input("Full directory of your SD card : "))
+            if driveDirectory[-1] == '/' :
+                driveDirectory = driveDirectory[:--1]
+            
+        except TypeError:
+            print("That's not a valid input")
+            continue
+        try:
+            directory = driveDirectory + "/dummy1"
+            with open(directory, 'ab') as file:
+                file.close()
+        except FileNotFoundError:
+            print("You do not have write access or the drive could not be found")
+            continue
+        except PermissionError:
+            print("You do not have write access")
+            continue
+        else:
+            return driveDirectory
 
 def getDriveLetter():
     while True:
@@ -85,10 +109,12 @@ def createDummyFiles(amount,dummyFileLocation):
     print("A dummy file has been created and saved as dummy1 on the root of the SD card")
     print("You may move this file to a different folder")
     print("This application will now close")
+    input()
     sys.exit()
 
 def main():
-    print("-Just Kalam's just a dummy file creator (for hiyaCFW)-")
+    print("Just Kalam's just a dummy file creator (for hiyaCFW)")
+    print(" ")
     print("This program will calculate if a dummy file is needed ")
     print("to insure hiyaCFW does not boot into the 'An error has")
     print("occured' screen")
@@ -103,6 +129,10 @@ def main():
         driveName = getDriveName()
         directory = '/Volumes/' + driveName + "/"
         freeSpace = getFreeSpace(directory)
+    elif platform.system() == 'Linux':
+        print('Platform : "Linux"')
+        driveDirectory = getDriveDirectory()
+        freeSpace = getFreeSpace(driveDirectory)
     else:
         sys.exit()
         
