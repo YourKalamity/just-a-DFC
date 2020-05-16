@@ -84,7 +84,6 @@ def getDriveLetter():
         else:
             return driveLetter
             break
-
 def dummyFilesNeeded(freeSpace):
     x =  freeSpace % 4
     if x <= 2:
@@ -105,6 +104,8 @@ def createDummyFiles(amount,dummyFileLocation):
         toWrite = '1'.encode()
         while x < numChars:
             dummyFile.write(toWrite)
+            gbWritten =  round((x / (1024 * 1024 * 1024)), 8)
+            print("Written ", x ,"bits out of ", numChars,". . . " , end = "\r")
             x = x + 1
 
     print("A dummy file has been created and saved as dummy1 on the root of the SD card")
