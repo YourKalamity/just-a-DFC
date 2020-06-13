@@ -99,17 +99,18 @@ def createDummyFiles(amount,dummyFileLocation):
     print("Creating dummy files...")
     print("Please wait...")
     with open(dummyFileLocation, 'ab') as dummyFile:
-        numChars = amount * 1024 * 1024 * 1024  + 1024
+        numChars = amount * 1024 * 1024 * 1024  + 10240000
         x = 0
         toWrite = '1'.encode()
         while x < numChars:
             dummyFile.write(toWrite)
-            gbWritten =  round((x / (1024 * 1024 * 1024)), 8)
-            print("Written ", x ,"bits out of ", numChars,". . . " , end = "\r")
             x = x + 1
 
     print("A dummy file has been created and saved as dummy1 on the root of the SD card")
     print("You may move this file to a different folder")
+    print("")
+    print("To double check you could run this program after it has closed")
+    print("to calculate if the free space is now ok")
     print("This application will now close")
     input()
     sys.exit()
