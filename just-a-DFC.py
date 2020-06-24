@@ -116,6 +116,10 @@ def createDummyFiles(amount,dummyFileLocation):
     sys.exit()
 
 def main():
+    if(sys.version_info.major < 3):
+        print("This program will ONLY work on Python 3 and above")
+        sys.exit()
+    
     print("Just Kalam's just a dummy file creator (for hiyaCFW)")
     print(" ")
     print("This program will calculate if a dummy file is needed ")
@@ -129,13 +133,11 @@ def main():
         freeSpace = getFreeSpace(directory)
     elif platform.system() == 'Darwin':
         print('Platform : "MacOS X" ')
-        print("This program will ONLY work on Python 3 and above")
         driveName = getDriveName()
         directory = '/Volumes/' + driveName + "/"
         freeSpace = getFreeSpace(directory)
     elif platform.system() == 'Linux':
         print('Platform : "Linux"')
-        print("This program will ONLY work on Python 3 and above")
         driveDirectory = getDriveDirectory()
         freeSpace = getFreeSpace(driveDirectory)
     else:
