@@ -117,7 +117,7 @@ def createDummyFiles(amount,dummyFileLocation):
 
 def main():
     if(sys.version_info.major < 3):
-	    print("This program will ONLY work on Python 3 and above")
+        print("This program will ONLY work on Python 3 and above")
         sys.exit()
     
     print("Just Kalam's just a dummy file creator (for hiyaCFW)")
