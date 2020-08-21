@@ -4,6 +4,14 @@ import ctypes
 import os
 import platform
 import sys
+import tkinter
+
+def chooseDir(source,entryBox):
+    source.sourceFolder =  filedialog.askdirectory(parent=source, initialdir= "/", title='Please select the directory of your SD card')
+    entryBox.delete(0, tkinter.END)
+    entryBox.insert(0, source.sourceFolder)
+
+
 
 def getFreeSpace(dirname):
     #Returns Space remaining in GB
@@ -121,6 +129,11 @@ def main():
     if(sys.version_info.major < 3):
         print("This program will ONLY work on Python 3 and above")
         sys.exit()
+        
+    window = tkinter.Tk()
+    title = tkinter.Label(window, text="just-a-DFC")
+    title.pack()
+    window.mainloop()
     
     print("Just Kalam's just a dummy file creator (for hiyaCFW)")
     print(" ")
