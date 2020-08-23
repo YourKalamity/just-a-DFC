@@ -26,19 +26,58 @@ jobs:
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Create Executable binary
         run: |
-          pyinstaller --console --name just-a-DFC-${{ steps.vars.outputs.tag }}.exe --onefile just-a-DFC.py 
+          pyinstaller --console --icon assets/dummy.ico --name just-a-DFC-Windows-${{ steps.vars.outputs.tag }}.exe --onefile just-a-DFC.py 
           cd dist
       - name: Publish
         uses: actions/upload-artifact@v2
         with:
           path: dist/just-a-DFC-${{ steps.vars.outputs.tag }}.exe
           name: windows
-        
+
+  mac:
+    runs-on: macos-latest
+    name: macOS
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+      - name: Install PyInstaller
+        run: |
+          pip3 install pyinstaller
+      - name: Get tag
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Create Exeutable
+        run: |
+          pyinstaller --console --icon assets/dummy.ico --name just-a-DFC-macOS-${{ steps.vars.outputs.tag }} --add-data "tools/Darwin/*:Darwin" --onefile just-a-DFC.py
+      - name: Publish 
+        uses: actions/upload-artifact@v2
+        with:
+          path: dist/just-a-DFC-macOS-${{ steps.vars.outputs.tag }}
+          name: macos
+  
+  python:
+    runs-on: ubuntu-latest
+    name: Python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Publish
+        uses: actions/upload-artifact@v2
+        with:
+          path: just-a-DFC.py
+          name: python 
+    
+
   publish:
     runs-on: ubuntu-latest
     name: Publish builds
     if: ${{ success() }}
-    needs: [windows]
+    needs: [windows,mac,python]
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
@@ -48,7 +87,7 @@ jobs:
           for file in ${{ github.workspace }}/*/*; do
             AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
             CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
-            CONTENT_TYPE="Content-Type: application/vnd.microsoft.portable-executable"
+            CONTENT_TYPE="Content-Type: application/binary"
             UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
             curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
