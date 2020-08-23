@@ -31,7 +31,7 @@ jobs:
       - name: Publish
         uses: actions/upload-artifact@v2
         with:
-          path: dist/just-a-DFC-${{ steps.vars.outputs.tag }}.exe
+          path: dist/just-a-DFC-Windows-${{ steps.vars.outputs.tag }}.exe
           name: windows
 
   mac:
