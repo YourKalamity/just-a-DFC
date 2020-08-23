@@ -32,8 +32,6 @@ jobs:
         with:
           path: dist/just-a-DFC-${{ steps.vars.outputs.tag }}.exe
           name: windows
-      - name: GitHub Upload Release Artifacts
-        uses: Roang-zero1/github-upload-release-artifacts-action@v2.1.0
         
   publish:
     runs-on: ubuntu-latest
