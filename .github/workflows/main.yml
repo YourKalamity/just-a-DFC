@@ -25,9 +25,8 @@ jobs:
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Create Executable binary
         run: |
-          pyinstaller --onefile just-a-DFC.py
+          pyinstaller --console --name just-a-DFC-${{ steps.vars.outputs.tag }}.exe --onefile just-a-DFC.py 
           cd dist
-          mv just-a-DFC just-a-DFC-${{ steps.vars.outputs.tag }}.exe
       - name: Publish
         uses: actions/upload-artifact@v2
         with:
