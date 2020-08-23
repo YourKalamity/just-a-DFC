@@ -53,7 +53,7 @@ jobs:
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Create Exeutable
         run: |
-          pyinstaller --console --icon assets/dummy.ico --name just-a-DFC-macOS-${{ steps.vars.outputs.tag }} --add-data "tools/Darwin/*:Darwin" --onefile just-a-DFC.py
+          pyinstaller --console --icon assets/dummy.ico --name just-a-DFC-macOS-${{ steps.vars.outputs.tag }} --onefile just-a-DFC.py
       - name: Publish 
         uses: actions/upload-artifact@v2
         with:
