@@ -7,19 +7,33 @@ import os
 import platform
 import sys
 import tkinter
+import tkinter.font 
+from tkinter import filedialog
+from tkinter import messagebox
+import threading
 
 def chooseDir(source,entryBox):
     source.sourceFolder =  filedialog.askdirectory(parent=source, initialdir= "/", title='Please select the directory of your SD card')
     entryBox.delete(0, tkinter.END)
     entryBox.insert(0, source.sourceFolder)
 
+def outputbox(message):
+    outputBox.configure(state='normal')
+    outputBox.insert('end', message+"\n")
+    outputBox.see(tkinter.END)
+    outputBox.configure(state='disabled')
 
+def threadFunction(location, source):
+    startThread = threading.Thread(target=start, daemon=True, args=(location,source,))
+    startThread.start()
 
 def getFreeSpace(dirname):
     #Returns Space remaining in GB
+    print(dirname)
     if platform.system() == 'Windows':
         free_bytes = ctypes.c_ulonglong(0)
         ctypes.windll.kernel32.GetDiskFreeSpaceExW(ctypes.c_wchar_p(dirname), None, None, ctypes.pointer(free_bytes))
+        print(free_bytes.value / 1024 / 1024 / 1024)
         return free_bytes.value / 1024 / 1024 / 1024
     else:
         st = os.statvfs(dirname)
@@ -108,8 +122,8 @@ def dummyFilesNeeded(freeSpace):
         return z
 
 def createDummyFiles(amount,dummyFileLocation):
-    print("Creating dummy files...")
-    print("Please wait...")
+    outputbox("Creating...")
+    outputbox("Please wait...")
     with open(dummyFileLocation, 'ab') as dummyFile:
         numChars = amount * 1024 * 1024 * 1024  + 10240000
         x = 0
@@ -118,23 +132,62 @@ def createDummyFiles(amount,dummyFileLocation):
             dummyFile.write(toWrite)
             x = x + 1
 
-    print("A dummy file has been created and saved as dummy1 on the root of the SD card")
-    print("You may move this file to a different folder")
-    print("")
-    print("To double check you could run this program after it has closed")
-    print("to calculate if the free space is now ok")
-    print("This application will now close")
-    input()
+    outputbox("DF Created")
+    outputbox("Close App")
     sys.exit()
+
+def start(location,source):
+    outputBox.configure(state='normal')
+    outputBox.delete('1.0', tkinter.END)
+    outputBox.configure(state='disabled')
+    print(location)
+    try:
+        if location.endswith("/"):
+            location = location[:-1]
+        directory = location + "/dummy1.dfc"
+        print(directory)
+        with open(directory, 'ab') as file:
+            file.close()
+    except FileNotFoundError:
+        outputbox("Access Error")
+        return
+    except PermissionError:
+        outputbox("Access Error")
+        return
+
+    freeSpace = getFreeSpace(location)
+    outputbox("Free Space: ")
+    outputbox(str(freeSpace) + "GB")
+    if (freeSpace % 4) <= 2:
+        outputbox("Dummy not needed")
+        return
+    else:
+        requiredAmount = (freeSpace % 4) - 2
+        outputbox(str(requiredAmount) + "GB needed")
+        createDummyFiles(requiredAmount, directory)
+    return
+
 
 def main():
     if(sys.version_info.major < 3):
         print("This program will ONLY work on Python 3 and above")
         sys.exit()
-        
     window = tkinter.Tk()
-    title = tkinter.Label(window, text="just-a-DFC")
-    title.pack()
+    window.minsize(100,100)
+    titleFont = tkinter.font.Font(size=20)
+    title = tkinter.Label(window, text="just-a-DFC", font=titleFont)
+    title.grid(row=0,column=0,sticky="w")
+    SDEntry = tkinter.Entry(width=20)
+    SDEntry.grid(column=0, row=2)
+    chooseDirButton = tkinter.Button(window, text = "Click to select SD", command =lambda:chooseDir(window,SDEntry),width=20)
+    chooseDirButton.grid(column=0, row=3,pady=1)
+    global outputBox
+    outputBox = tkinter.Text(window,state='disabled', width = 20, height = 5, bg="black", fg="white")
+    outputBox.grid(column=0,row=4,sticky="w")
+    startButton = tkinter.Button(window,text="Start", command =lambda:threadFunction(SDEntry.get(),window,), width=10, font=("Segoe UI", 11))
+    startButton.grid(column=0,row=5)
+
+
     window.mainloop()
     
     print("Just Kalam's just a dummy file creator (for hiyaCFW)")
