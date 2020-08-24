@@ -57,7 +57,13 @@ def getDriveName():
             continue
         else:
             return driveName
-        
+
+def donothing():
+    return
+
+def closeButtonPress(source):
+    source.destroy()
+
 def getDriveDirectory():
     while True:
         try:
@@ -137,6 +143,8 @@ def createDummyFiles(amount,dummyFileLocation):
     sys.exit()
 
 def start(location,source):
+    window.protocol("WM_DELETE_WINDOW",lambda:donothing)
+    startButton.config(state="disabled")
     outputBox.configure(state='normal')
     outputBox.delete('1.0', tkinter.END)
     outputBox.configure(state='disabled')
@@ -150,9 +158,13 @@ def start(location,source):
             file.close()
     except FileNotFoundError:
         outputbox("Access Error")
+        startButton.config(state="normal")
+        window.protocol("WM_DELETE_WINDOW",lambda:closeButtonPress(window))
         return
     except PermissionError:
         outputbox("Access Error")
+        startButton.config(state="normal")
+        window.protocol("WM_DELETE_WINDOW",lambda:closeButtonPress(window))
         return
 
     freeSpace = getFreeSpace(location)
@@ -160,18 +172,23 @@ def start(location,source):
     outputbox(str(freeSpace) + "GB")
     if (freeSpace % 4) <= 2:
         outputbox("Dummy not needed")
+        startButton.config(state="normal")
+        window.protocol("WM_DELETE_WINDOW",lambda:closeButtonPress(window))
         return
     else:
         requiredAmount = (freeSpace % 4) - 2
         outputbox(str(requiredAmount) + "GB needed")
         createDummyFiles(requiredAmount, directory)
-    return
+        startButton.config(state="normal")
+        window.protocol("WM_DELETE_WINDOW",lambda:closeButtonPress(window))
+        return
 
 
 def main():
     if(sys.version_info.major < 3):
         print("This program will ONLY work on Python 3 and above")
         sys.exit()
+    global window
     window = tkinter.Tk()
     window.minsize(100,100)
     titleFont = tkinter.font.Font(size=20)
@@ -184,6 +201,7 @@ def main():
     global outputBox
     outputBox = tkinter.Text(window,state='disabled', width = 20, height = 5, bg="black", fg="white")
     outputBox.grid(column=0,row=4,sticky="w")
+    global startButton
     startButton = tkinter.Button(window,text="Start", command =lambda:threadFunction(SDEntry.get(),window,), width=10, font=("Segoe UI", 11))
     startButton.grid(column=0,row=5)
 
