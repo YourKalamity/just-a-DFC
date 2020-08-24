@@ -51,12 +51,9 @@ def createDummyFiles(amount,dummyFileLocation):
     outputbox("Creating...")
     outputbox("Please wait...")
     with open(dummyFileLocation, 'ab') as dummyFile:
-        x = 0
-        toWrite = '1'.encode()
-        while x < numChars:
-            dummyFile.write(toWrite)
-            x = x + 1
-
+        dummyFile.seek(round(amount * 1024 * 1024 * 1024 + 10240000) - 1)
+        dummyFile.write(b"\0")
+        
     outputbox("DF Created")
     outputbox("Close App")
     return
@@ -116,13 +113,13 @@ def main():
     title.grid(row=0,column=0,sticky="w")
     SDEntry = tkinter.Entry(width=20)
     SDEntry.grid(column=0, row=2)
-    chooseDirButton = tkinter.Button(window, text = "Click to select SD", command =lambda:chooseDir(window,SDEntry),width=20)
+    chooseDirButton = tkinter.Button(window, text = "Click to select SD", command =lambda:chooseDir(window,SDEntry),width=20,fg="#000000")
     chooseDirButton.grid(column=0, row=3,pady=1)
     global outputBox
-    outputBox = tkinter.Text(window,state='disabled', width = 20, height = 5, bg="black", fg="white")
-    outputBox.grid(column=0,row=4,sticky="w")
+    outputBox = tkinter.Text(window,state='disabled',width=20, height = 5, bg="black", fg="white")
+    outputBox.grid(column=0,row=4,sticky="nesw")
     global startButton
-    startButton = tkinter.Button(window,text="Start", command =lambda:threadFunction(SDEntry.get(),window,), width=10, font=("Segoe UI", 11))
+    startButton = tkinter.Button(window,text="Start", command =lambda:threadFunction(SDEntry.get(),window,), width=10, font=("Segoe UI", 11),fg="#000000")
     startButton.grid(column=0,row=6)
     
     
