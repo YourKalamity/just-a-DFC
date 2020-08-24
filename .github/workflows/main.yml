@@ -1,4 +1,4 @@
-name: Create Windows Executable
+name: Create binaries and upload
 
 on:
   release:
@@ -60,6 +60,32 @@ jobs:
           path: dist/just-a-DFC-macOS-${{ steps.vars.outputs.tag }}
           name: macos
   
+  linux:
+    runs-on: ubuntu-latest
+    name: Linux
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          architecture: "x64"
+      - name: Install PyInstaller
+        run: |
+          pip3 install pyinstaller
+      - name: Get tag
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - name: Make binary
+        run: |
+           pyinstaller --console  --name just-a-DFC-Linux-${{ steps.vars.outputs.tag }} --onefile just-a-DFC.py
+      - name: Publish 
+        uses: actions/upload-artifact@v2
+        with:
+          path: dist/just-a-DFC-Linux-${{ steps.vars.outputs.tag }}
+          name: linux
+  
   python:
     runs-on: ubuntu-latest
     name: Python
@@ -77,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish builds
     if: ${{ success() }}
-    needs: [windows,mac,python]
+    needs: [windows,mac,python,linux]
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
